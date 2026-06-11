@@ -1,11 +1,6 @@
 name: bench
-# Native amd64 throughput on ubuntu-latest. The dev machine is arm64; the
-# library is pure Go (no asm), but the authoritative numbers for the README
-# Performance table are the native-amd64 ones this job produces, since amd64 is
-# the target the implementation was tuned for (Zen3-class, no AVX-512).
 on:
-  push:
-    branches: [main, bench]
+  push: { branches: [main, bench] }
   workflow_dispatch:
 jobs:
   bench:
@@ -14,9 +9,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with: { go-version: stable }
-      - name: cpu features
-        run: grep -m1 -oE 'avx2|avx512[a-z]+' /proc/cpuinfo | sort -u | tr "\n" " "; echo
-      - name: go env
-        run: go env GOARCH GOAMD64
-      - name: benchmark single vs multi-table vs Count
-        run: go test -run '^$' -bench . -benchmem -count=6 ./...
+      - run: go test -run '^$' -bench 'Count|Single|Multi' -benchmem -count=6 ./...
