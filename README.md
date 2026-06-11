@@ -1,6 +1,7 @@
 # histogram
 
 [![ci](https://github.com/go-simd/histogram/actions/workflows/ci.yml/badge.svg)](https://github.com/go-simd/histogram/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 [![Go Reference](https://pkg.go.dev/badge/github.com/go-simd/histogram.svg)](https://pkg.go.dev/github.com/go-simd/histogram)
 
 The fastest correct **byte-value histogram** in pure Go (`CGO_ENABLED=0`, stable
@@ -85,6 +86,10 @@ the repeated counter while the eight tables keep the pipeline full.
 test (empty, single byte, all-same, every-byte-once, block-boundary sizes),
 random-size property tests, a skewed-data test, and a `FuzzCount` differential
 fuzz target (run for 15 s in CI on both amd64 and arm64).
+
+The test suite covers **100 % of the Go statements** (CI fails below that on both
+the amd64 and arm64 jobs). This package is pure Go — there are no generated `.s`
+kernels — so the coverage figure reflects the whole implementation.
 
 ## Existing work
 
