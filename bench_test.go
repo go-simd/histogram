@@ -60,6 +60,56 @@ func multi4(data []byte) [256]uint32 {
 	return c
 }
 
+func multi4word(data []byte) [256]uint32 {
+	var c0, c1, c2, c3 [256]uint32
+	n := len(data)
+	i := 0
+	for ; i+8 <= n; i += 8 {
+		b0, b1, b2, b3 := data[i], data[i+1], data[i+2], data[i+3]
+		b4, b5, b6, b7 := data[i+4], data[i+5], data[i+6], data[i+7]
+		c0[b0]++
+		c1[b1]++
+		c2[b2]++
+		c3[b3]++
+		c0[b4]++
+		c1[b5]++
+		c2[b6]++
+		c3[b7]++
+	}
+	for ; i < n; i++ {
+		c0[data[i]]++
+	}
+	var c [256]uint32
+	for j := 0; j < 256; j++ {
+		c[j] = c0[j] + c1[j] + c2[j] + c3[j]
+	}
+	return c
+}
+
+func multi8(data []byte) [256]uint32 {
+	var c0, c1, c2, c3, c4, c5, c6, c7 [256]uint32
+	n := len(data)
+	i := 0
+	for ; i+8 <= n; i += 8 {
+		c0[data[i]]++
+		c1[data[i+1]]++
+		c2[data[i+2]]++
+		c3[data[i+3]]++
+		c4[data[i+4]]++
+		c5[data[i+5]]++
+		c6[data[i+6]]++
+		c7[data[i+7]]++
+	}
+	for ; i < n; i++ {
+		c0[data[i]]++
+	}
+	var c [256]uint32
+	for j := 0; j < 256; j++ {
+		c[j] = c0[j] + c1[j] + c2[j] + c3[j] + c4[j] + c5[j] + c6[j] + c7[j]
+	}
+	return c
+}
+
 func runBench(b *testing.B, f func([]byte) [256]uint32) {
 	for _, skew := range []bool{false, true} {
 		name := "uniform"
@@ -79,6 +129,8 @@ func runBench(b *testing.B, f func([]byte) [256]uint32) {
 
 var sink [256]uint32
 
-func BenchmarkSingle(b *testing.B) { runBench(b, single) }
-func BenchmarkMulti4(b *testing.B) { runBench(b, multi4) }
-func BenchmarkCount(b *testing.B)  { runBench(b, Count) } // exported: 8 word-batched tables
+func BenchmarkSingle(b *testing.B)     { runBench(b, single) }
+func BenchmarkMulti4(b *testing.B)     { runBench(b, multi4) }
+func BenchmarkMulti4Word(b *testing.B) { runBench(b, multi4word) }
+func BenchmarkMulti8(b *testing.B)     { runBench(b, multi8) }
+func BenchmarkCount(b *testing.B)      { runBench(b, Count) } // exported impl
