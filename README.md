@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/go-simd/brand/main/social/go-simd.png" alt="go-simd/histogram" width="720"></p>
+
 # histogram
 
 [![ci](https://github.com/go-simd/histogram/actions/workflows/ci.yml/badge.svg)](https://github.com/go-simd/histogram/actions/workflows/ci.yml)
