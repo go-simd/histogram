@@ -6,7 +6,7 @@ jobs:
   bench:
     runs-on: ubuntu-latest # native amd64
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
         with: { go-version: stable }
       - run: go test -run '^$' -bench 'Count|Single|Multi' -benchmem -count=6 ./...
