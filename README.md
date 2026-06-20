@@ -91,6 +91,20 @@ The test suite covers **100 % of the Go statements** (CI fails below that on bot
 the amd64 and arm64 jobs). This package is pure Go — there are no generated `.s`
 kernels — so the coverage figure reflects the whole implementation.
 
+### Architecture coverage
+
+This package is multi-table scalar (no SIMD kernel — see the honest answer
+above), so there is no per-arch speedup to report; the value is correctness and
+portability across Go's 64-bit targets. **ppc64le is validated on real POWER10
+silicon** (GCC Compile Farm, https://portal.cfarm.net/, Go 1.26.4, June 2026):
+the table tests and `FuzzCount` pass natively. The portable code is also build-
+and test-validated on a **seventh architecture, ppc64 (big-endian)**, on real
+POWER9 silicon (GCC Compile Farm) — a big-endian target distinct from s390x.
+**s390x stays qemu-validated** (native run pending a GitHub-hosted IBM Z runner),
+but the histogram is byte-counting, not SIMD, so no native throughput number is
+relevant. Framing: the six SIMD targets the go-simd family covers are here
+validated on seven architectures.
+
 ## Existing work
 
 There was no pure-Go library exposing a fast `Count(data) [256]uint32` API.
