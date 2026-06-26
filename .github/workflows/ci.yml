@@ -3,7 +3,7 @@ on:
   push: { branches: [main] }
   pull_request:
 jobs:
-  test:
+  native:
     strategy:
       fail-fast: false
       matrix:
@@ -24,13 +24,6 @@ jobs:
           echo "coverage=$pct"
           [ "$pct" = "100.0%" ] || { echo "coverage below 100%"; exit 1; }
       - run: go test -run '^$' -fuzz FuzzCount -fuzztime 15s ./...
-
-  # The non-amd64/arm64 backends have no native GitHub runners, so validate them
-  # under qemu user emulation. histogram is pure scalar Go (no SIMD kernel), so
-  # the POWER (ppc64le), z/Architecture (s390x), riscv64 and loong64 arches all
-  # exercise the same portable path; we cross-compile a coverage-instrumented
-  # test binary on the host, then run the full table tests + 100% coverage gate
-  # inside an arch-matched debian container.
   emulated:
     runs-on: ubuntu-latest
     strategy:
@@ -42,8 +35,8 @@ jobs:
           - { arch: ppc64le, image: "debian:trixie", qemu: "power9" }
           - { arch: s390x,   image: "debian:trixie", qemu: "qemu" }
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with: { go-version: stable }
       - run: docker run --privileged --rm tonistiigi/binfmt --install all
       - run: CGO_ENABLED=0 GOOS=linux GOARCH=${{ matrix.arch }} go test -c -cover -o /tmp/t.test .
