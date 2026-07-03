@@ -76,6 +76,23 @@ value — the low-entropy case that wrecks a naive single-table loop).
 | 4 partial tables                 |         3.77 |        2.28 |
 | **8 word-batched tables (`Count`)** |      4.52 |        2.83 |
 
+### s390x (real z15 — LPAR guest, VXE2, Ubuntu 6.8, go1.26.4, 2026-07-03)
+
+Multi-lane conflict avoidance still helps on Z even without a native
+scatter — but the two-thread shared LPAR ceiling is well below arm64:
+
+| approach                         | uniform GB/s | skew90 GB/s |
+| -------------------------------- | -----------: | ----------: |
+| single table (naive baseline)    |         1.06 |        0.49 |
+| 4 partial tables                 |         1.81 |        0.70 |
+| 4 word-batched                   |         2.15 |        0.68 |
+| **`Count` (8 word-batched)**     |         1.70 |        0.95 |
+
+`Multi4Word` (word-batched 4-table) is the fastest kernel on this
+shared LPAR at 2.15 GB/s uniform = 2.03× single-table. Absolute z15
+throughput will be higher on a dedicated partition; the ratios are
+what matter here.
+
 **The finding:** SIMD does not help a byte histogram on AVX2/NEON hardware — it
 is a scatter, and there is no scatter instruction. The multi-table scalar loop
 is the real winner. On uniform data it edges out the single-table baseline; on
