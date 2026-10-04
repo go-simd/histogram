@@ -30,8 +30,8 @@ func TestCountTable(t *testing.T) {
 		{"everyByteOnce", everyByteOnce()},
 		{"everyByteOnceX3", repeatSlice(everyByteOnce(), 3)},
 		{"countUp", countUp(777)},
-		{"tail7", bytesRepeat(9, 7)},   // shorter than one 8-byte block
-		{"block8", bytesRepeat(9, 8)},  // exactly one block, no tail
+		{"tail7", bytesRepeat(9, 7)},    // shorter than one 8-byte block
+		{"block8", bytesRepeat(9, 8)},   // exactly one block, no tail
 		{"block8p1", bytesRepeat(9, 9)}, // one block + one tail byte
 	}
 	for _, tc := range cases {
